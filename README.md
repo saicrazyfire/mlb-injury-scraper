@@ -64,19 +64,40 @@ uv run mlb-injury-server
 
 ## MCP Configuration
 
-Add to your Claude Desktop configuration file (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS or `%APPDATA%\Claude\claude_desktop_config.json` on Windows):
+Add to your Claude Desktop configuration file (`%APPDATA%\Claude\claude_desktop_config.json` on Windows or `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 
+**Option 1: Using virtual environment Python directly (recommended)**
 ```json
 {
   "mcpServers": {
     "mlb-injury-scraper": {
-      "command": "uv",
-      "args": ["run", "mlb-injury-server"],
-      "cwd": "/path/to/this/project"
+      "command": "/path/to/your/project/.venv/Scripts/python.exe",
+      "args": ["/path/to/your/project/server.py"]
     }
   }
 }
 ```
+
+**Option 2: Using uvx (after installing the package)**
+First install the package:
+```bash
+uv sync
+uv pip install -e .
+```
+
+Then use this configuration:
+```json
+{
+  "mcpServers": {
+    "mlb-injury-scraper": {
+      "command": "uvx",
+      "args": ["--from", "/path/to/your/project", "mlb-injury-server"]
+    }
+  }
+}
+```
+
+**Important**: Replace `/path/to/your/project` with the absolute path to your project directory. Use forward slashes `/` in JSON even on Windows (e.g., `C:/Users/username/project`).
 
 ## Data Structure
 
