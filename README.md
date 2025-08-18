@@ -41,7 +41,7 @@ The scraper targets the specific HTML structure of the MLB injury page:
 
 1. Install using uv:
 ```bash
-uv pip install -e .
+uv sync
 ```
 
 ## Usage
@@ -64,7 +64,7 @@ uv run mlb-injury-server
 
 ## MCP Configuration
 
-Add to your `.kiro/settings/mcp.json`:
+Add to your Claude Desktop configuration file (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS or `%APPDATA%\Claude\claude_desktop_config.json` on Windows):
 
 ```json
 {
@@ -72,9 +72,7 @@ Add to your `.kiro/settings/mcp.json`:
     "mlb-injury-scraper": {
       "command": "uv",
       "args": ["run", "mlb-injury-server"],
-      "cwd": "/path/to/this/project",
-      "disabled": false,
-      "autoApprove": ["get_mets_injuries", "get_injury_summary", "search_player_injury"]
+      "cwd": "/path/to/this/project"
     }
   }
 }
