@@ -79,7 +79,7 @@ Add to your Claude Desktop configuration file (`%APPDATA%\Claude\claude_desktop_
 
 **Important**: Replace `/path/to/your/project` with the absolute path to your project directory. 
 
-**Windows users**: Use either forward slashes (`C:/Users/username/project`) or escape backslashes (`C:\\Users\\username\\project`) in the JSON paths.
+**Windows users**: Escape backslashes with double backslashes (e.g., `C:\\Users\\username\\project`) in the JSON paths.
 
 ## Data Structure
 
