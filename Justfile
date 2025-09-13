@@ -10,7 +10,7 @@ container_name := "mlb-injury-scraper-container"
 tag := "latest"
 
 # Default recipe - show available commands
-default:
+help:
     @just --list
 
 # Build Docker image
