@@ -10,7 +10,7 @@ container_name := "mlb-injury-scraper-container"
 tag := "latest"
 
 # Default recipe - show available commands
-help:
+default:
     @just --list
 
 # Build Docker image
@@ -29,6 +29,17 @@ stop:
 # Show container logs
 logs:
     docker logs {{ container_name }}
+
+# Run MCP gateway for testing
+mcp-gateway:
+    docker run \
+        -i \
+        --rm \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        docker/mcp-gateway \
+        --catalog=/mcp/catalogs/mlb-injury-scraper.yaml \
+        --registry=/mcp/registry.yaml \
+        --transport=stdio
 
 # Run locally with uv (syncs if needed)
 uv-run:
