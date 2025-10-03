@@ -30,12 +30,15 @@ The scraper targets the specific HTML structure of the MLB injury page:
 
 ## Features
 
-- Scrapes New York Mets injury data from MLB.com in real-time
-- Handles special characters in player names (e.g., Dedniel Núñez)
-- Maintains chronological order (most recent injuries first)
-- Serves data via FastMCP server for AI tool integration
-- Provides multiple tools for different data views
-- Robust error handling and logging
+- **Multi-Team Support**: Scrapes injury data for all 30 MLB teams from MLB.com
+- **Real-time Data**: Fetches current injury information in real-time
+- **Team Configuration**: Configurable team URLs via `config.toml` file
+- **Special Character Support**: Handles special characters in player names (e.g., Dedniel Núñez)
+- **Chronological Order**: Maintains chronological order (most recent injuries first)
+- **MCP Server Integration**: Serves data via FastMCP server for AI tool integration
+- **Multiple Query Tools**: Provides various tools for different data views and team queries
+- **Robust Error Handling**: Comprehensive logging and graceful failure handling
+- **Backward Compatibility**: Legacy Mets-only methods still supported
 
 ## Installation
 
@@ -93,9 +96,33 @@ docker-compose up -d
 
 ### MCP Tools Available
 
-1. **get_mets_injuries()** - Get complete injury report with all fields
-2. **get_injury_summary()** - Get summary with counts and breakdowns  
-3. **search_player_injury(player_name)** - Search for specific player
+1. **get_team_injuries(team)** - Get complete injury report for any MLB team
+2. **get_available_teams()** - Get list of all supported MLB teams  
+3. **get_injury_summary(team)** - Get summary with counts and breakdowns for a team
+4. **search_player_injury(player_name, team)** - Search for specific player on a team
+5. **get_mets_injuries()** - Legacy method for Mets-only queries (backward compatibility)
+
+#### Team Keys
+Use these team keys when calling the tools:
+- `mets`, `yankees`, `dodgers`, `astros`, `braves`, `phillies`, `padres`, `orioles`
+- `rangers`, `marlins`, `giants`, `cubs`, `redsox`, `guardians`, `brewers`, `dbacks`
+- `tigers`, `cardinals`, `twins`, `mariners`, `bluejays`, `rays`, `nationals`, `reds`
+- `pirates`, `royals`, `angels`, `athletics`, `whitesox`, `rockies`
+
+#### Examples
+```python
+# Get Dodgers injuries
+get_team_injuries("dodgers")
+
+# Get Yankees injury summary  
+get_injury_summary("yankees")
+
+# Search for a player on the Mets
+search_player_injury("Pete Alonso", "mets")
+
+# Get all available teams
+get_available_teams()
+```
 
 ## MCP Configuration
 
@@ -118,6 +145,27 @@ Add to your Claude Desktop configuration file (`%APPDATA%\Claude\claude_desktop_
 ```
 
 **Important**: Replace `/path/to/your/project/mlb-injury-scraper` with the absolute path to your project directory.
+
+## Configuration
+
+The application uses a `config.toml` file to define MLB team URLs and metadata. This file contains:
+
+- **Team URLs**: Direct links to each team's injury report page on MLB.com
+- **Team Names**: Full team names (e.g., "New York Mets")
+- **Abbreviations**: Standard MLB team abbreviations (e.g., "NYM")
+
+### Adding New Teams
+
+To add support for additional teams, edit the `config.toml` file:
+
+```toml
+[teams.newteam]
+name = "New Team Name"
+url = "https://www.mlb.com/news/newteam-injuries-and-roster-moves"
+abbreviation = "NT"
+```
+
+The application will automatically pick up changes to the configuration file.
 
 ## Docker Images
 

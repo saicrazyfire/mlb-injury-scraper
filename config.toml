@@ -1,0 +1,154 @@
+# MLB Team Injury URLs Configuration
+# This file contains URLs for MLB team injury reports from MLB.com
+
+[teams]
+
+[teams.mets]
+name = "New York Mets"
+url = "https://www.mlb.com/news/mets-injuries-and-roster-moves"
+abbreviation = "NYM"
+
+[teams.yankees]
+name = "New York Yankees"
+url = "https://www.mlb.com/news/yankees-injuries-and-roster-moves"
+abbreviation = "NYY"
+
+[teams.dodgers]
+name = "Los Angeles Dodgers"
+url = "https://www.mlb.com/news/dodgers-injuries-and-roster-moves"
+abbreviation = "LAD"
+
+[teams.astros]
+name = "Houston Astros"
+url = "https://www.mlb.com/news/astros-injuries-and-roster-moves"
+abbreviation = "HOU"
+
+[teams.braves]
+name = "Atlanta Braves"
+url = "https://www.mlb.com/news/braves-injuries-and-roster-moves"
+abbreviation = "ATL"
+
+[teams.phillies]
+name = "Philadelphia Phillies"
+url = "https://www.mlb.com/news/phillies-injuries-and-roster-moves"
+abbreviation = "PHI"
+
+[teams.padres]
+name = "San Diego Padres"
+url = "https://www.mlb.com/news/padres-injuries-and-roster-moves"
+abbreviation = "SD"
+
+[teams.orioles]
+name = "Baltimore Orioles"
+url = "https://www.mlb.com/news/orioles-injuries-and-roster-moves"
+abbreviation = "BAL"
+
+[teams.rangers]
+name = "Texas Rangers"
+url = "https://www.mlb.com/news/rangers-injuries-and-roster-moves"
+abbreviation = "TEX"
+
+[teams.marlins]
+name = "Miami Marlins"
+url = "https://www.mlb.com/news/marlins-injuries-and-roster-moves"
+abbreviation = "MIA"
+
+[teams.giants]
+name = "San Francisco Giants"
+url = "https://www.mlb.com/news/giants-injuries-and-roster-moves"
+abbreviation = "SF"
+
+[teams.cubs]
+name = "Chicago Cubs"
+url = "https://www.mlb.com/news/cubs-injuries-and-roster-moves"
+abbreviation = "CHC"
+
+[teams.redsox]
+name = "Boston Red Sox"
+url = "https://www.mlb.com/news/red-sox-injuries-and-roster-moves"
+abbreviation = "BOS"
+
+[teams.guardians]
+name = "Cleveland Guardians"
+url = "https://www.mlb.com/news/guardians-injuries-and-roster-moves"
+abbreviation = "CLE"
+
+[teams.brewers]
+name = "Milwaukee Brewers"
+url = "https://www.mlb.com/news/brewers-injuries-and-roster-moves"
+abbreviation = "MIL"
+
+[teams.dbacks]
+name = "Arizona Diamondbacks"
+url = "https://www.mlb.com/news/d-backs-injuries-and-roster-moves"
+abbreviation = "AZ"
+
+[teams.tigers]
+name = "Detroit Tigers"
+url = "https://www.mlb.com/news/tigers-injuries-and-roster-moves"
+abbreviation = "DET"
+
+[teams.cardinals]
+name = "St. Louis Cardinals"
+url = "https://www.mlb.com/news/cardinals-injuries-and-roster-moves"
+abbreviation = "STL"
+
+[teams.twins]
+name = "Minnesota Twins"
+url = "https://www.mlb.com/news/twins-injuries-and-roster-moves"
+abbreviation = "MIN"
+
+[teams.mariners]
+name = "Seattle Mariners"
+url = "https://www.mlb.com/news/mariners-injuries-and-roster-moves"
+abbreviation = "SEA"
+
+[teams.bluejays]
+name = "Toronto Blue Jays"
+url = "https://www.mlb.com/news/blue-jays-injuries-and-roster-moves"
+abbreviation = "TOR"
+
+[teams.rays]
+name = "Tampa Bay Rays"
+url = "https://www.mlb.com/news/rays-injuries-and-roster-moves"
+abbreviation = "TB"
+
+[teams.nationals]
+name = "Washington Nationals"
+url = "https://www.mlb.com/news/nationals-injuries-and-roster-moves"
+abbreviation = "WSH"
+
+[teams.reds]
+name = "Cincinnati Reds"
+url = "https://www.mlb.com/news/reds-injuries-and-roster-moves"
+abbreviation = "CIN"
+
+[teams.pirates]
+name = "Pittsburgh Pirates"
+url = "https://www.mlb.com/news/pirates-injuries-and-roster-moves"
+abbreviation = "PIT"
+
+[teams.royals]
+name = "Kansas City Royals"
+url = "https://www.mlb.com/news/royals-injuries-and-roster-moves"
+abbreviation = "KC"
+
+[teams.angels]
+name = "Los Angeles Angels"
+url = "https://www.mlb.com/news/angels-injuries-and-roster-moves"
+abbreviation = "LAA"
+
+[teams.athletics]
+name = "Oakland Athletics"
+url = "https://www.mlb.com/news/athletics-injuries-and-roster-moves"
+abbreviation = "OAK"
+
+[teams.whitesox]
+name = "Chicago White Sox"
+url = "https://www.mlb.com/news/white-sox-injuries-and-roster-moves"
+abbreviation = "CWS"
+
+[teams.rockies]
+name = "Colorado Rockies"
+url = "https://www.mlb.com/news/rockies-injuries-and-roster-moves"
+abbreviation = "COL"
