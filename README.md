@@ -70,16 +70,19 @@ Add to your Claude Desktop configuration file (`%APPDATA%\Claude\claude_desktop_
 {
   "mcpServers": {
     "mlb-injury-scraper": {
-      "command": "/path/to/your/project/.venv/Scripts/python.exe",
-      "args": ["/path/to/your/project/server.py"]
+      "command": "uv",
+      "args": [
+        "run",
+        "--project",
+        "/path/to/your/project/mlb-injury-scraper",
+        "/path/to/your/project/mlb-injury-scraper/server.py"
+      ]
     }
   }
 }
 ```
 
-**Important**: Replace `/path/to/your/project` with the absolute path to your project directory. 
-
-**Windows users**: Escape backslashes with double backslashes (e.g., `C:\\Users\\username\\project`) in the JSON paths.
+**Important**: Replace `/path/to/your/project/mlb-injury-scraper` with the absolute path to your project directory.
 
 ## Data Structure
 
