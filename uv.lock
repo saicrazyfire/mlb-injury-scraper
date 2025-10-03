@@ -548,6 +548,7 @@ requires-dist = [
     { name = "lxml", specifier = ">=4.9.0" },
     { name = "pydantic", specifier = ">=2.0.0" },
     { name = "requests", specifier = ">=2.31.0" },
+    { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.0.0" },
 ]
 
 [[package]]

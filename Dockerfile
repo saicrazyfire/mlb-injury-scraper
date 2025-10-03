@@ -21,8 +21,8 @@ WORKDIR /app
 COPY pyproject.toml ./
 
 # Install dependencies
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir .
+RUN pip install --upgrade pip --root-user-action=ignore && \
+    pip install --no-cache-dir . --root-user-action=ignore
 
 # Copy the rest of the source code
 COPY . .

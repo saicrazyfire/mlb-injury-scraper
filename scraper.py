@@ -6,6 +6,14 @@ from typing import List, Dict, Optional
 from dataclasses import dataclass
 import re
 import logging
+import sys
+from pathlib import Path
+
+# Handle TOML imports for different Python versions
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
 
 logger = logging.getLogger(__name__)
 
@@ -23,15 +31,55 @@ class InjuredPlayer:
 class MLBInjuryScraper:
     """Scraper for MLB injury data."""
     
-    def __init__(self):
+    def __init__(self, config_path: Optional[str] = None):
         self.session = requests.Session()
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         })
+        
+        # Load team configuration
+        if config_path is None:
+            config_path = Path(__file__).parent / "config.toml"
+        else:
+            config_path = Path(config_path)
+            
+        self.teams_config = self._load_config(config_path)
     
-    def scrape_mets_injuries(self) -> List[InjuredPlayer]:
-        """Scrape Mets injury data from MLB.com."""
-        url = "https://www.mlb.com/news/mets-injuries-and-roster-moves"
+    def _load_config(self, config_path: Path) -> Dict:
+        """Load team configuration from TOML file."""
+        try:
+            with open(config_path, 'rb') as f:
+                config = tomllib.load(f)
+            logger.info(f"Loaded configuration for {len(config.get('teams', {}))} teams")
+            return config
+        except FileNotFoundError:
+            logger.error(f"Configuration file not found: {config_path}")
+            return {'teams': {}}
+        except Exception as e:
+            logger.error(f"Error loading configuration: {e}")
+            return {'teams': {}}
+    
+    def get_available_teams(self) -> List[str]:
+        """Get list of available team keys."""
+        return list(self.teams_config.get('teams', {}).keys())
+    
+    def get_team_info(self, team_key: str) -> Optional[Dict]:
+        """Get team information by key."""
+        return self.teams_config.get('teams', {}).get(team_key.lower())
+    
+    def scrape_team_injuries(self, team_key: str) -> List[InjuredPlayer]:
+        """Scrape injury data for a specific team."""
+        team_info = self.get_team_info(team_key)
+        if not team_info:
+            logger.error(f"Team '{team_key}' not found in configuration")
+            return []
+        
+        url = team_info.get('url')
+        if not url:
+            logger.error(f"No URL configured for team '{team_key}'")
+            return []
+        
+        logger.info(f"Scraping injuries for {team_info.get('name', team_key)} from {url}")
         
         try:
             response = self.session.get(url, timeout=10)
@@ -100,11 +148,15 @@ class MLBInjuryScraper:
             return injured_players
             
         except requests.RequestException as e:
-            logger.error(f"Error fetching injury data: {e}")
+            logger.error(f"Error fetching injury data for {team_key}: {e}")
             return []
         except Exception as e:
-            logger.error(f"Error parsing injury data: {e}")
+            logger.error(f"Error parsing injury data for {team_key}: {e}")
             return []
+    
+    def scrape_mets_injuries(self) -> List[InjuredPlayer]:
+        """Scrape Mets injury data from MLB.com (legacy method for backward compatibility)."""
+        return self.scrape_team_injuries('mets')
     
     def _extract_structured_injury_info(self, content) -> List[Dict]:
         """Extract injury information from article content, targeting specific div structure."""
