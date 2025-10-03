@@ -52,8 +52,43 @@ uv run python scripts/test_scraper.py
 ```
 
 ### Running the MCP Server
+
+#### Local Development
 ```bash
 uv run mlb-injury-server
+```
+
+#### Using Docker
+
+**Pull and run the pre-built image:**
+```bash
+docker run -p 8000:8000 ghcr.io/yourusername/mlb-injury-scraper:latest
+```
+
+**Build and run locally:**
+```bash
+# Build the image
+docker build -t mlb-injury-scraper .
+
+# Run the container
+docker run -p 8000:8000 mlb-injury-scraper
+```
+
+**Using Docker Compose:**
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  mlb-injury-scraper:
+    image: ghcr.io/yourusername/mlb-injury-scraper:latest
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+```
+
+Then run:
+```bash
+docker-compose up -d
 ```
 
 ### MCP Tools Available
@@ -83,6 +118,25 @@ Add to your Claude Desktop configuration file (`%APPDATA%\Claude\claude_desktop_
 ```
 
 **Important**: Replace `/path/to/your/project/mlb-injury-scraper` with the absolute path to your project directory.
+
+## Docker Images
+
+Pre-built Docker images are automatically built and published to GitHub Container Registry on every release:
+
+- **Latest stable**: `ghcr.io/yourusername/mlb-injury-scraper:latest`
+- **Specific version**: `ghcr.io/yourusername/mlb-injury-scraper:v1.0.0`
+- **Development**: `ghcr.io/yourusername/mlb-injury-scraper:main`
+
+Images are built for both `linux/amd64` and `linux/arm64` platforms.
+
+### CI/CD Pipeline
+
+The project includes a GitHub Actions workflow that:
+- Runs tests on every push and pull request
+- Builds multi-platform Docker images
+- Publishes images to GitHub Container Registry
+- Creates attestations for supply chain security
+- Supports semantic versioning with git tags
 
 ## Data Structure
 
