@@ -128,30 +128,6 @@ The HTTP/SSE transport allows MCP clients to connect to the server over HTTP, ma
 
 ### Connecting MCP Clients
 
-#### Python MCP Client:
-```python
-import asyncio
-import httpx
-from mcp.client.sse import sse_client
-from mcp import ClientSession
-
-async def connect_to_mlb_server():
-    async with httpx.AsyncClient() as client:
-        async with sse_client("http://localhost:8000/sse") as (read, write):
-            async with ClientSession(read, write) as session:
-                # Initialize connection
-                await session.initialize()
-                
-                # List available tools
-                tools = await session.list_tools()
-                
-                # Call a tool
-                result = await session.call_tool("get_team_injuries", {"team": "mets"})
-                return result
-
-asyncio.run(connect_to_mlb_server())
-```
-
 #### Claude Desktop Configuration (HTTP/SSE):
 ```json
 {
@@ -163,110 +139,7 @@ asyncio.run(connect_to_mlb_server())
 }
 ```
 
-**Note**: The HTTP/SSE transport uses the standard MCP protocol, so all MCP tools work identically to stdio mode.
-
-### Additional REST API (Optional)
-
-In addition to the MCP protocol, a standalone REST API server is also available in `http_server.py` for non-MCP integrations:
-
-```bash
-# Run standalone REST API (not MCP-compatible)
-uv run mlb-injury-http-server
-```
-
-This provides standard REST endpoints at:
-- `GET /api/teams` - List all teams
-- `GET /api/teams/{team}/injuries` - Get team injuries
-- `GET /api/teams/{team}/summary` - Injury summary
-- `GET /api/teams/{team}/players/{player_name}` - Search player
-- `GET /docs` - Interactive API documentation
-
-**Note**: The REST API and MCP server are separate services. Use MCP HTTP/SSE transport for MCP client compatibility.
-
-### Example API Usage
-
-#### Using curl:
-```bash
-# Get available teams
-curl http://localhost:8000/api/teams
-
-# Get Dodgers injuries
-curl http://localhost:8000/api/teams/dodgers/injuries
-
-# Get Yankees injury summary
-curl http://localhost:8000/api/teams/yankees/summary
-
-# Search for a player
-curl http://localhost:8000/api/teams/mets/players/Pete
-
-# Stream real-time updates (SSE)
-curl -N http://localhost:8000/api/teams/mets/injuries/stream?interval=30
-```
-
-#### Using Python:
-```python
-import requests
-
-# Basic API client
-base_url = "http://localhost:8000"
-
-# Get teams
-teams = requests.get(f"{base_url}/api/teams").json()
-print(f"Available teams: {teams['total_teams']}")
-
-# Get team injuries
-injuries = requests.get(f"{base_url}/api/teams/mets/injuries").json()
-print(f"Mets injuries: {injuries['total_injured']}")
-
-# For SSE streaming, see examples/http_client_example.py
-```
-
-#### Using JavaScript:
-```javascript
-// Fetch team data
-const response = await fetch('http://localhost:8000/api/teams/dodgers/injuries');
-const data = await response.json();
-console.log(`${data.team_name} has ${data.total_injured} injured players`);
-
-// Server-Sent Events for real-time updates
-const eventSource = new EventSource('http://localhost:8000/api/teams/mets/injuries/stream?interval=30');
-eventSource.onmessage = function(event) {
-    const data = JSON.parse(event.data);
-    console.log('Injury update:', data);
-};
-```
-
-### Response Formats
-
-All endpoints return JSON responses with consistent structure:
-
-```json
-{
-  "team": "mets",
-  "team_name": "New York Mets", 
-  "total_injured": 5,
-  "players": [
-    {
-      "name": "Player Name",
-      "position": "RHP",
-      "injury": "Right elbow strain",
-      "il_date": "June 15 (15-day IL)",
-      "expected_return": "Late July",
-      "status": "Progressing well in rehab",
-      "last_updated": "July 10"
-    }
-  ]
-}
-```
-
-### Running the HTTP Server
-
-The HTTP server runs on port 8000 by default and provides:
-- **REST API endpoints** for programmatic access
-- **Server-Sent Events (SSE)** for real-time streaming
-- **Interactive documentation** at `/docs`
-- **CORS support** for web applications
-- **Health checks** for monitoring
+**Note**: The HTTP/SSE transport uses the standard MCP protocol, so all MCP tools work identically to stdio mode. See `examples/mcp_http_client_example.py` for programmatic client usage.
 
 ### MCP Tools Available
 
