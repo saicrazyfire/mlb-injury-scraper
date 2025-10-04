@@ -33,12 +33,8 @@ RUN chown -R appuser:appuser /app
 # Switch to non-root user
 USER appuser
 
-# Expose port for HTTP server
+# Expose port for MCP HTTP/SSE server
 EXPOSE 8000
 
-# Health check for HTTP mode
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health', timeout=5)" || exit 1
-
-# Default to HTTP server mode, but allow override
-CMD ["python", "server.py", "--http"]
+# Default to MCP over HTTP/SSE transport, but allow override  
+CMD ["python", "server.py", "--sse"]

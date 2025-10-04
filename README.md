@@ -58,37 +58,37 @@ uv run python scripts/test_scraper.py
 
 #### Local Development
 ```bash
-# Traditional MCP server (for AI tools)
+# Traditional MCP server with stdio transport (for local AI tools)
 uv run mlb-injury-server
 
-# HTTP/REST API server (for web applications)
-uv run python server.py --http
+# MCP server with HTTP/SSE transport (for remote/web-based MCP clients)
+uv run python server.py --sse
 
-# Or use the dedicated HTTP server script
-uv run mlb-injury-http-server
+# Or specify custom host/port
+uv run python server.py --sse --host 0.0.0.0 --port 8000
 ```
 
 #### Using Docker
 
-**Pull and run the pre-built image (HTTP mode by default):**
+**Pull and run the pre-built image (MCP HTTP/SSE by default):**
 ```bash
 docker run -p 8000:8000 ghcr.io/yourusername/mlb-injury-scraper:latest
 ```
 
-**Run in MCP mode:**
+**Run in stdio mode (for local integration):**
 ```bash
 docker run -it ghcr.io/yourusername/mlb-injury-scraper:latest python server.py
 ```
 
-**Build and run locally (HTTP mode):**
+**Build and run locally:**
 ```bash
 # Build the image
 docker build -t mlb-injury-scraper .
 
-# Run the container (HTTP server)
+# Run with HTTP/SSE transport (default)
 docker run -p 8000:8000 mlb-injury-scraper
 
-# Run in MCP mode
+# Run with stdio transport
 docker run -it mlb-injury-scraper python server.py
 ```
 
@@ -109,32 +109,79 @@ Then run:
 docker-compose up -d
 ```
 
-## HTTP/REST API
+## MCP Over HTTP/SSE Transport
 
-The application now supports both traditional MCP integration and HTTP/REST API access, making it usable without local code execution.
+The MCP server supports two transport protocols:
 
-### API Endpoints
+1. **stdio transport** (default): Traditional MCP over standard input/output for local AI tools
+2. **HTTP/SSE transport** (`--sse` flag): MCP protocol over HTTP with Server-Sent Events for remote access
 
-**Base URL**: `http://localhost:8000` (when running locally)
+### Using HTTP/SSE Transport
 
-#### Core Endpoints
+The HTTP/SSE transport allows MCP clients to connect to the server over HTTP, making it accessible without local code execution. This is perfect for:
+- Web-based MCP clients
+- Remote deployments
+- Cloud-hosted AI services
+- Docker containers
 
-- **Health Check**: `GET /health`
-- **API Info**: `GET /` (returns endpoint documentation)
-- **Interactive Docs**: `GET /docs` (Swagger UI)
-- **OpenAPI Schema**: `GET /openapi.json`
+**MCP Endpoint**: `http://localhost:8000/sse`
 
-#### Team Data Endpoints
+### Connecting MCP Clients
 
-- **Available Teams**: `GET /api/teams`
-- **Team Injuries**: `GET /api/teams/{team}/injuries`
-- **Injury Summary**: `GET /api/teams/{team}/summary`
-- **Player Search**: `GET /api/teams/{team}/players/{player_name}`
-- **Real-time Stream**: `GET /api/teams/{team}/injuries/stream?interval={seconds}`
+#### Python MCP Client:
+```python
+import asyncio
+import httpx
+from mcp.client.sse import sse_client
+from mcp import ClientSession
 
-#### Legacy Endpoints
+async def connect_to_mlb_server():
+    async with httpx.AsyncClient() as client:
+        async with sse_client("http://localhost:8000/sse") as (read, write):
+            async with ClientSession(read, write) as session:
+                # Initialize connection
+                await session.initialize()
+                
+                # List available tools
+                tools = await session.list_tools()
+                
+                # Call a tool
+                result = await session.call_tool("get_team_injuries", {"team": "mets"})
+                return result
 
-- **Mets Injuries**: `GET /api/mets/injuries` (redirects to `/api/teams/mets/injuries`)
+asyncio.run(connect_to_mlb_server())
+```
+
+#### Claude Desktop Configuration (HTTP/SSE):
+```json
+{
+  "mcpServers": {
+    "mlb-injury-scraper": {
+      "url": "http://localhost:8000/sse"
+    }
+  }
+}
+```
+
+**Note**: The HTTP/SSE transport uses the standard MCP protocol, so all MCP tools work identically to stdio mode.
+
+### Additional REST API (Optional)
+
+In addition to the MCP protocol, a standalone REST API server is also available in `http_server.py` for non-MCP integrations:
+
+```bash
+# Run standalone REST API (not MCP-compatible)
+uv run mlb-injury-http-server
+```
+
+This provides standard REST endpoints at:
+- `GET /api/teams` - List all teams
+- `GET /api/teams/{team}/injuries` - Get team injuries
+- `GET /api/teams/{team}/summary` - Injury summary
+- `GET /api/teams/{team}/players/{player_name}` - Search player
+- `GET /docs` - Interactive API documentation
+
+**Note**: The REST API and MCP server are separate services. Use MCP HTTP/SSE transport for MCP client compatibility.
 
 ### Example API Usage
 
