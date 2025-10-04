@@ -33,11 +33,12 @@ RUN chown -R appuser:appuser /app
 # Switch to non-root user
 USER appuser
 
-# Expose port (if needed for health checks)
+# Expose port for HTTP server
 EXPOSE 8000
 
-# Health check
+# Health check for HTTP mode
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8000/health', timeout=5)" || exit 1
 
-CMD ["python", "server.py"]
+# Default to HTTP server mode, but allow override
+CMD ["python", "server.py", "--http"]

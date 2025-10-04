@@ -266,6 +266,20 @@ wheels = [
 ]
 
 [[package]]
+name = "fastapi"
+version = "0.118.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "starlette" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/28/3c/2b9345a6504e4055eaa490e0b41c10e338ad61d9aeaae41d97807873cdf2/fastapi-0.118.0.tar.gz", hash = "sha256:5e81654d98c4d2f53790a7d32d25a7353b30c81441be7d0958a26b5d761fa1c8", size = 310536 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/54/20/54e2bdaad22ca91a59455251998d43094d5c3d3567c52c7c04774b3f43f2/fastapi-0.118.0-py3-none-any.whl", hash = "sha256:705137a61e2ef71019d2445b123aa8845bd97273c395b744d5a7dfe559056855", size = 97694 },
+]
+
+[[package]]
 name = "fastmcp"
 version = "2.11.3"
 source = { registry = "https://pypi.org/simple" }
@@ -535,20 +549,28 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
+    { name = "fastapi" },
     { name = "fastmcp" },
+    { name = "httpx" },
     { name = "lxml" },
     { name = "pydantic" },
     { name = "requests" },
+    { name = "sse-starlette" },
+    { name = "uvicorn" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.12.0" },
+    { name = "fastapi", specifier = ">=0.104.0" },
     { name = "fastmcp", specifier = ">=0.1.0" },
+    { name = "httpx", specifier = ">=0.25.0" },
     { name = "lxml", specifier = ">=4.9.0" },
     { name = "pydantic", specifier = ">=2.0.0" },
     { name = "requests", specifier = ">=2.31.0" },
+    { name = "sse-starlette", specifier = ">=1.6.0" },
     { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.0.0" },
+    { name = "uvicorn", specifier = ">=0.24.0" },
 ]
 
 [[package]]
