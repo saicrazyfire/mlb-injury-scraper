@@ -151,26 +151,31 @@ def search_player_injury(player_name: str, team: str = 'mets') -> Dict[str, Any]
         return {"error": f"Failed to search for player: {str(e)}"}
 
 def main():
-    """Run the MCP server or HTTP server based on command line arguments."""
-    if len(sys.argv) > 1 and sys.argv[1] == "--http":
-        # Run HTTP server
-        from http_server import run_http_server
-        
-        host = "0.0.0.0"
-        port = 8000
-        
-        # Parse additional arguments
-        for i, arg in enumerate(sys.argv[2:], 2):
-            if arg == "--host" and i + 1 < len(sys.argv):
-                host = sys.argv[i + 1]
-            elif arg == "--port" and i + 1 < len(sys.argv):
-                port = int(sys.argv[i + 1])
-        
-        logger.info(f"Starting HTTP server mode on {host}:{port}")
-        run_http_server(host=host, port=port)
+    """Run the MCP server with configurable transport (stdio or HTTP/SSE)."""
+    # Default values
+    transport = "stdio"
+    host = "0.0.0.0"
+    port = 8000
+    
+    # Parse command line arguments
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "--http" or sys.argv[1] == "--sse":
+            transport = "sse"  # FastMCP uses 'sse' for HTTP/SSE transport
+            
+            # Parse additional arguments
+            for i, arg in enumerate(sys.argv[2:], 2):
+                if arg == "--host" and i + 1 < len(sys.argv):
+                    host = sys.argv[i + 1]
+                elif arg == "--port" and i + 1 < len(sys.argv):
+                    port = int(sys.argv[i + 1])
+    
+    # Run MCP server with specified transport
+    if transport == "sse":
+        logger.info(f"Starting MCP server with HTTP/SSE transport on {host}:{port}")
+        logger.info(f"MCP endpoint will be available at: http://{host}:{port}/sse")
+        mcp.run(transport="sse", host=host, port=port)
     else:
-        # Run traditional MCP server
-        logger.info("Starting MCP server mode")
+        logger.info("Starting MCP server with stdio transport")
         mcp.run()
 
 if __name__ == "__main__":

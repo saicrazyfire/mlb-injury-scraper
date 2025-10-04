@@ -58,37 +58,37 @@ uv run python scripts/test_scraper.py
 
 #### Local Development
 ```bash
-# Traditional MCP server (for AI tools)
+# Traditional MCP server with stdio transport (for local AI tools)
 uv run mlb-injury-server
 
-# HTTP/REST API server (for web applications)
-uv run python server.py --http
+# MCP server with HTTP/SSE transport (for remote/web-based MCP clients)
+uv run python server.py --sse
 
-# Or use the dedicated HTTP server script
-uv run mlb-injury-http-server
+# Or specify custom host/port
+uv run python server.py --sse --host 0.0.0.0 --port 8000
 ```
 
 #### Using Docker
 
-**Pull and run the pre-built image (HTTP mode by default):**
+**Pull and run the pre-built image (MCP HTTP/SSE by default):**
 ```bash
 docker run -p 8000:8000 ghcr.io/yourusername/mlb-injury-scraper:latest
 ```
 
-**Run in MCP mode:**
+**Run in stdio mode (for local integration):**
 ```bash
 docker run -it ghcr.io/yourusername/mlb-injury-scraper:latest python server.py
 ```
 
-**Build and run locally (HTTP mode):**
+**Build and run locally:**
 ```bash
 # Build the image
 docker build -t mlb-injury-scraper .
 
-# Run the container (HTTP server)
+# Run with HTTP/SSE transport (default)
 docker run -p 8000:8000 mlb-injury-scraper
 
-# Run in MCP mode
+# Run with stdio transport
 docker run -it mlb-injury-scraper python server.py
 ```
 
@@ -109,117 +109,37 @@ Then run:
 docker-compose up -d
 ```
 
-## HTTP/REST API
+## MCP Over HTTP/SSE Transport
 
-The application now supports both traditional MCP integration and HTTP/REST API access, making it usable without local code execution.
+The MCP server supports two transport protocols:
 
-### API Endpoints
+1. **stdio transport** (default): Traditional MCP over standard input/output for local AI tools
+2. **HTTP/SSE transport** (`--sse` flag): MCP protocol over HTTP with Server-Sent Events for remote access
 
-**Base URL**: `http://localhost:8000` (when running locally)
+### Using HTTP/SSE Transport
 
-#### Core Endpoints
+The HTTP/SSE transport allows MCP clients to connect to the server over HTTP, making it accessible without local code execution. This is perfect for:
+- Web-based MCP clients
+- Remote deployments
+- Cloud-hosted AI services
+- Docker containers
 
-- **Health Check**: `GET /health`
-- **API Info**: `GET /` (returns endpoint documentation)
-- **Interactive Docs**: `GET /docs` (Swagger UI)
-- **OpenAPI Schema**: `GET /openapi.json`
+**MCP Endpoint**: `http://localhost:8000/sse`
 
-#### Team Data Endpoints
+### Connecting MCP Clients
 
-- **Available Teams**: `GET /api/teams`
-- **Team Injuries**: `GET /api/teams/{team}/injuries`
-- **Injury Summary**: `GET /api/teams/{team}/summary`
-- **Player Search**: `GET /api/teams/{team}/players/{player_name}`
-- **Real-time Stream**: `GET /api/teams/{team}/injuries/stream?interval={seconds}`
-
-#### Legacy Endpoints
-
-- **Mets Injuries**: `GET /api/mets/injuries` (redirects to `/api/teams/mets/injuries`)
-
-### Example API Usage
-
-#### Using curl:
-```bash
-# Get available teams
-curl http://localhost:8000/api/teams
-
-# Get Dodgers injuries
-curl http://localhost:8000/api/teams/dodgers/injuries
-
-# Get Yankees injury summary
-curl http://localhost:8000/api/teams/yankees/summary
-
-# Search for a player
-curl http://localhost:8000/api/teams/mets/players/Pete
-
-# Stream real-time updates (SSE)
-curl -N http://localhost:8000/api/teams/mets/injuries/stream?interval=30
-```
-
-#### Using Python:
-```python
-import requests
-
-# Basic API client
-base_url = "http://localhost:8000"
-
-# Get teams
-teams = requests.get(f"{base_url}/api/teams").json()
-print(f"Available teams: {teams['total_teams']}")
-
-# Get team injuries
-injuries = requests.get(f"{base_url}/api/teams/mets/injuries").json()
-print(f"Mets injuries: {injuries['total_injured']}")
-
-# For SSE streaming, see examples/http_client_example.py
-```
-
-#### Using JavaScript:
-```javascript
-// Fetch team data
-const response = await fetch('http://localhost:8000/api/teams/dodgers/injuries');
-const data = await response.json();
-console.log(`${data.team_name} has ${data.total_injured} injured players`);
-
-// Server-Sent Events for real-time updates
-const eventSource = new EventSource('http://localhost:8000/api/teams/mets/injuries/stream?interval=30');
-eventSource.onmessage = function(event) {
-    const data = JSON.parse(event.data);
-    console.log('Injury update:', data);
-};
-```
-
-### Response Formats
-
-All endpoints return JSON responses with consistent structure:
-
+#### Claude Desktop Configuration (HTTP/SSE):
 ```json
 {
-  "team": "mets",
-  "team_name": "New York Mets", 
-  "total_injured": 5,
-  "players": [
-    {
-      "name": "Player Name",
-      "position": "RHP",
-      "injury": "Right elbow strain",
-      "il_date": "June 15 (15-day IL)",
-      "expected_return": "Late July",
-      "status": "Progressing well in rehab",
-      "last_updated": "July 10"
+  "mcpServers": {
+    "mlb-injury-scraper": {
+      "url": "http://localhost:8000/sse"
     }
-  ]
+  }
 }
 ```
 
-### Running the HTTP Server
-
-The HTTP server runs on port 8000 by default and provides:
-- **REST API endpoints** for programmatic access
-- **Server-Sent Events (SSE)** for real-time streaming
-- **Interactive documentation** at `/docs`
-- **CORS support** for web applications
-- **Health checks** for monitoring
+**Note**: The HTTP/SSE transport uses the standard MCP protocol, so all MCP tools work identically to stdio mode. See `examples/mcp_http_client_example.py` for programmatic client usage.
 
 ### MCP Tools Available
 
