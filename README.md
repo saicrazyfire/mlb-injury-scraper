@@ -72,12 +72,17 @@ uv run python server.py --sse --host 0.0.0.0 --port 8000
 
 **Pull and run the pre-built image (MCP HTTP/SSE by default):**
 ```bash
-docker run -p 8000:8000 ghcr.io/yourusername/mlb-injury-scraper:latest
+docker run -p 8000:8000 ghcr.io/saicrazyfire/mlb-injury-scraper:latest
+```
+
+**Run in SSE mode (for remote MCP clients):**
+```bash
+docker run -p 8000:8000 ghcr.io/saicrazyfire/mlb-injury-scraper:latest python server.py --sse
 ```
 
 **Run in stdio mode (for local integration):**
 ```bash
-docker run -it ghcr.io/yourusername/mlb-injury-scraper:latest python server.py
+docker run -it ghcr.io/saicrazyfire/mlb-injury-scraper:latest python server.py
 ```
 
 **Build and run locally:**
@@ -98,7 +103,7 @@ docker run -it mlb-injury-scraper python server.py
 version: '3.8'
 services:
   mlb-injury-scraper:
-    image: ghcr.io/yourusername/mlb-injury-scraper:latest
+    image: ghcr.io/saicrazyfire/mlb-injury-scraper:latest
     ports:
       - "8000:8000"
     restart: unless-stopped
@@ -218,9 +223,9 @@ The application will automatically pick up changes to the configuration file.
 
 Pre-built Docker images are automatically built and published to GitHub Container Registry on every release:
 
-- **Latest stable**: `ghcr.io/yourusername/mlb-injury-scraper:latest`
-- **Specific version**: `ghcr.io/yourusername/mlb-injury-scraper:v1.0.0`
-- **Development**: `ghcr.io/yourusername/mlb-injury-scraper:main`
+- **Latest stable**: `ghcr.io/saicrazyfire/mlb-injury-scraper:latest`
+- **Specific version**: `ghcr.io/saicrazyfire/mlb-injury-scraper:v1.0.0`
+- **Development**: `ghcr.io/saicrazyfire/mlb-injury-scraper:main`
 
 Images are built for both `linux/amd64` and `linux/arm64` platforms.
 
