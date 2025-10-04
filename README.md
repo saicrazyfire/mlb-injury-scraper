@@ -58,23 +58,38 @@ uv run python scripts/test_scraper.py
 
 #### Local Development
 ```bash
+# Traditional MCP server (for AI tools)
 uv run mlb-injury-server
+
+# HTTP/REST API server (for web applications)
+uv run python server.py --http
+
+# Or use the dedicated HTTP server script
+uv run mlb-injury-http-server
 ```
 
 #### Using Docker
 
-**Pull and run the pre-built image:**
+**Pull and run the pre-built image (HTTP mode by default):**
 ```bash
 docker run -p 8000:8000 ghcr.io/yourusername/mlb-injury-scraper:latest
 ```
 
-**Build and run locally:**
+**Run in MCP mode:**
+```bash
+docker run -it ghcr.io/yourusername/mlb-injury-scraper:latest python server.py
+```
+
+**Build and run locally (HTTP mode):**
 ```bash
 # Build the image
 docker build -t mlb-injury-scraper .
 
-# Run the container
+# Run the container (HTTP server)
 docker run -p 8000:8000 mlb-injury-scraper
+
+# Run in MCP mode
+docker run -it mlb-injury-scraper python server.py
 ```
 
 **Using Docker Compose:**
@@ -93,6 +108,118 @@ Then run:
 ```bash
 docker-compose up -d
 ```
+
+## HTTP/REST API
+
+The application now supports both traditional MCP integration and HTTP/REST API access, making it usable without local code execution.
+
+### API Endpoints
+
+**Base URL**: `http://localhost:8000` (when running locally)
+
+#### Core Endpoints
+
+- **Health Check**: `GET /health`
+- **API Info**: `GET /` (returns endpoint documentation)
+- **Interactive Docs**: `GET /docs` (Swagger UI)
+- **OpenAPI Schema**: `GET /openapi.json`
+
+#### Team Data Endpoints
+
+- **Available Teams**: `GET /api/teams`
+- **Team Injuries**: `GET /api/teams/{team}/injuries`
+- **Injury Summary**: `GET /api/teams/{team}/summary`
+- **Player Search**: `GET /api/teams/{team}/players/{player_name}`
+- **Real-time Stream**: `GET /api/teams/{team}/injuries/stream?interval={seconds}`
+
+#### Legacy Endpoints
+
+- **Mets Injuries**: `GET /api/mets/injuries` (redirects to `/api/teams/mets/injuries`)
+
+### Example API Usage
+
+#### Using curl:
+```bash
+# Get available teams
+curl http://localhost:8000/api/teams
+
+# Get Dodgers injuries
+curl http://localhost:8000/api/teams/dodgers/injuries
+
+# Get Yankees injury summary
+curl http://localhost:8000/api/teams/yankees/summary
+
+# Search for a player
+curl http://localhost:8000/api/teams/mets/players/Pete
+
+# Stream real-time updates (SSE)
+curl -N http://localhost:8000/api/teams/mets/injuries/stream?interval=30
+```
+
+#### Using Python:
+```python
+import requests
+
+# Basic API client
+base_url = "http://localhost:8000"
+
+# Get teams
+teams = requests.get(f"{base_url}/api/teams").json()
+print(f"Available teams: {teams['total_teams']}")
+
+# Get team injuries
+injuries = requests.get(f"{base_url}/api/teams/mets/injuries").json()
+print(f"Mets injuries: {injuries['total_injured']}")
+
+# For SSE streaming, see examples/http_client_example.py
+```
+
+#### Using JavaScript:
+```javascript
+// Fetch team data
+const response = await fetch('http://localhost:8000/api/teams/dodgers/injuries');
+const data = await response.json();
+console.log(`${data.team_name} has ${data.total_injured} injured players`);
+
+// Server-Sent Events for real-time updates
+const eventSource = new EventSource('http://localhost:8000/api/teams/mets/injuries/stream?interval=30');
+eventSource.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    console.log('Injury update:', data);
+};
+```
+
+### Response Formats
+
+All endpoints return JSON responses with consistent structure:
+
+```json
+{
+  "team": "mets",
+  "team_name": "New York Mets", 
+  "total_injured": 5,
+  "players": [
+    {
+      "name": "Player Name",
+      "position": "RHP",
+      "injury": "Right elbow strain",
+      "il_date": "June 15 (15-day IL)",
+      "expected_return": "Late July",
+      "status": "Progressing well in rehab",
+      "last_updated": "July 10"
+    }
+  ]
+}
+```
+
+### Running the HTTP Server
+
+The HTTP server runs on port 8000 by default and provides:
+- **REST API endpoints** for programmatic access
+- **Server-Sent Events (SSE)** for real-time streaming
+- **Interactive documentation** at `/docs`
+- **CORS support** for web applications
+- **Health checks** for monitoring
 
 ### MCP Tools Available
 

@@ -10,6 +10,10 @@ dependencies = [
     "pydantic>=2.0.0",
     "lxml>=4.9.0",
     "tomli>=2.0.0; python_version<'3.11'",
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "sse-starlette>=1.6.0",
+    "httpx>=0.25.0",
 ]
 
 [build-system]
@@ -18,7 +22,8 @@ build-backend = "hatchling.build"
 
 [project.scripts]
 mlb-injury-server = "server:main"
+mlb-injury-http-server = "http_server:run_http_server"
 
 [tool.hatch.build.targets.wheel]
 packages = ["."]
-include = ["scraper.py", "server.py"]
+include = ["scraper.py", "server.py", "http_server.py"]
